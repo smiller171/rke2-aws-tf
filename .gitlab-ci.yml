@@ -1,0 +1,68 @@
+image:
+  name: registry.gitlab.com/enbuild-staging/hardened-gitlab-runner:latest
+workflow:
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+variables:
+  TF_ROOT: ${CI_PROJECT_DIR}
+  TF_CLI_CONFIG_FILE: $TF_ROOT/.terraformrc
+  TERRAFORM_MODULE_NAME: rke2
+cache:
+  key: ${TERRAFORM_MODULE_NAME}
+  paths:
+    - ${TF_ROOT}/.terraform
+
+before_script:
+  - source ~/.bash_profile; source ~/.bashrc || true
+  - ./bin/install-linux.sh
+  - tfenv init
+  - cd ${TF_ROOT}
+  - tfenv install
+  - echo -e "credentials \"$CI_SERVER_HOST\" {\n  token = \"$CI_JOB_TOKEN\"\n}" > $TF_CLI_CONFIG_FILE
+
+stages:
+  - validate
+  - upload
+
+validate:
+  stage: validate
+  needs: []
+  variables:
+  script:
+    - gitlab-terraform validate
+
+pre-commit:
+  stage: validate
+  needs: []
+  script:
+    - gitlab-terraform init -backend=false
+    - pre-commit run --all
+
+upload:
+  stage: upload
+  needs:
+    - job: validate
+      artifacts: false
+    - job: pre-commit
+      artifacts: false
+  image: curlimages/curl:latest
+  variables:
+    TERRAFORM_MODULE_DIR: ${TF_ROOT}
+    TERRAFORM_MODULE_SYSTEM: aws
+    TERRAFORM_MODULE_VERSION: ${CI_COMMIT_TAG}
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: on_success
+    - when: never
+  before_script:
+    - cd $TERRAFORM_MODULE_DIR
+  script:
+    - TERRAFORM_MODULE_NAME=$(echo "${TERRAFORM_MODULE_NAME}" | tr " _" -) # module-name must not have spaces or underscores, so translate them to hyphens
+    - tar -vczf ${TERRAFORM_MODULE_NAME}-${TERRAFORM_MODULE_SYSTEM}-${TERRAFORM_MODULE_VERSION}.tgz -C ${TERRAFORM_MODULE_DIR} -X .tarignore .
+    - 'curl --fail-with-body --location --header "JOB-TOKEN: ${CI_JOB_TOKEN}"
+      --upload-file ${TERRAFORM_MODULE_NAME}-${TERRAFORM_MODULE_SYSTEM}-${TERRAFORM_MODULE_VERSION}.tgz
+      ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/terraform/modules/${TERRAFORM_MODULE_NAME}/${TERRAFORM_MODULE_SYSTEM}/${TERRAFORM_MODULE_VERSION}/file'

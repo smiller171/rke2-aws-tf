@@ -1,0 +1,10 @@
+---
+minimum_severity: "HIGH"
+concise_output: true
+exclude:
+  - aws-ec2-no-public-egress-sgr
+  - aws-ec2-enforce-launch-config-http-token-imds
+  - aws-ec2-enforce-http-token-imds
+  - aws-ec2-enable-at-rest-encryption
+  - aws-iam-no-policy-wildcards
+  - aws-s3-encryption-customer-key
