@@ -16,6 +16,7 @@ variable "subnets" {
 variable "instance_type" {
   description = "Node pool instance type"
   default     = "t3.medium"
+  type        = string
 }
 
 variable "ami" {
@@ -123,6 +124,7 @@ variable "rke2_version" {
 variable "rke2_config" {
   description = "Node pool additional configuration passed as rke2 config file, see https://docs.rke2.io/install/install_options/agent_config for full list of options"
   default     = ""
+  type        = string
 }
 
 variable "enable_ccm" {
