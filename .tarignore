@@ -1,0 +1,13 @@
+.terraform*
+.tfsec
+.trunk
+bin
+examples
+.editorconfig
+.git*
+.pre-commit-config.yaml
+.terraform-docs.yml
+.terraform-version
+.terraform.lock.hcl
+.tflint.hcl
+.yamllint.yml

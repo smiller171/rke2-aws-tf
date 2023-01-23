@@ -45,4 +45,3 @@
 | nodepool\_id | n/a |
 | nodepool\_name | n/a |
 | security\_group | n/a |
-
