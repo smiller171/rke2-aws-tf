@@ -205,7 +205,7 @@ We use `tfenv` to manage `terraform` versions, so the version is defined in the 
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cp_lb"></a> [cp\_lb](#module\_cp\_lb) | ./modules/elb | n/a |
+| <a name="module_cp_lb"></a> [cp\_lb](#module\_cp\_lb) | ./modules/nlb | n/a |
 | <a name="module_iam"></a> [iam](#module\_iam) | ./modules/policies | n/a |
 | <a name="module_init"></a> [init](#module\_init) | ./modules/userdata | n/a |
 | <a name="module_servers"></a> [servers](#module\_servers) | ./modules/nodepool | n/a |
@@ -239,6 +239,7 @@ We use `tfenv` to manage `terraform` versions, so the version is defined in the 
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | Name of the rkegov cluster to create | `string` | n/a | yes |
 | <a name="input_subnets"></a> [subnets](#input\_subnets) | List of subnet IDs to create resources in | `list(string)` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | VPC ID to create resources in | `string` | n/a | yes |
+| <a name="input_associate_public_ip_address"></a> [associate\_public\_ip\_address](#input\_associate\_public\_ip\_address) | n/a | `bool` | `false` | no |
 | <a name="input_block_device_mappings"></a> [block\_device\_mappings](#input\_block\_device\_mappings) | Server pool block device mapping configuration | `map(string)` | <pre>{<br>  "encrypted": false,<br>  "size": 30<br>}</pre> | no |
 | <a name="input_controlplane_access_logs_bucket"></a> [controlplane\_access\_logs\_bucket](#input\_controlplane\_access\_logs\_bucket) | Bucket name for logging requests to control plane load balancer | `string` | `"disabled"` | no |
 | <a name="input_controlplane_allowed_cidrs"></a> [controlplane\_allowed\_cidrs](#input\_controlplane\_allowed\_cidrs) | Server pool security group allowed cidr ranges | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
@@ -247,17 +248,20 @@ We use `tfenv` to manage `terraform` versions, so the version is defined in the 
 | <a name="input_download"></a> [download](#input\_download) | Toggle best effort download of rke2 dependencies (rke2 and aws cli), if disabled, dependencies are assumed to exist in $PATH | `bool` | `true` | no |
 | <a name="input_enable_ccm"></a> [enable\_ccm](#input\_enable\_ccm) | Toggle enabling the cluster as aws aware, this will ensure the appropriate IAM policies are present | `bool` | `false` | no |
 | <a name="input_extra_block_device_mappings"></a> [extra\_block\_device\_mappings](#input\_extra\_block\_device\_mappings) | Used to specify additional block device mapping configurations | `list(map(string))` | `[]` | no |
+| <a name="input_extra_cloud_config_config"></a> [extra\_cloud\_config\_config](#input\_extra\_cloud\_config\_config) | extra config to append to cloud-config | `string` | `""` | no |
 | <a name="input_extra_security_group_ids"></a> [extra\_security\_group\_ids](#input\_extra\_security\_group\_ids) | List of additional security group IDs | `list(string)` | `[]` | no |
 | <a name="input_iam_instance_profile"></a> [iam\_instance\_profile](#input\_iam\_instance\_profile) | Server pool IAM Instance Profile, created if left blank (default behavior) | `string` | `""` | no |
 | <a name="input_iam_permissions_boundary"></a> [iam\_permissions\_boundary](#input\_iam\_permissions\_boundary) | If provided, the IAM role created for the servers will be created with this permissions boundary attached. | `string` | `null` | no |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | Server pool instance type | `string` | `"t3a.medium"` | no |
+| <a name="input_metadata_options"></a> [metadata\_options](#input\_metadata\_options) | Instance Metadata Options | `map(any)` | <pre>{<br>  "http_endpoint": "enabled",<br>  "http_put_response_hop_limit": 2,<br>  "http_tokens": "required",<br>  "instance_metadata_tags": "disabled"<br>}</pre> | no |
 | <a name="input_post_userdata"></a> [post\_userdata](#input\_post\_userdata) | Custom userdata to run immediately after rke2 node attempts to join cluster | `string` | `""` | no |
 | <a name="input_pre_userdata"></a> [pre\_userdata](#input\_pre\_userdata) | Custom userdata to run immediately before rke2 node attempts to join cluster, after required rke2, dependencies are installed | `string` | `""` | no |
 | <a name="input_rke2_config"></a> [rke2\_config](#input\_rke2\_config) | Server pool additional configuration passed as rke2 config file, see https://docs.rke2.io/install/install_options/server_config for full list of options | `string` | `""` | no |
 | <a name="input_rke2_version"></a> [rke2\_version](#input\_rke2\_version) | Version to use for RKE2 server nodes | `string` | `"v1.19.7+rke2r1"` | no |
-| <a name="input_servers"></a> [servers](#input\_servers) | Number of servers to create | `number` | `1` | no |
+| <a name="input_servers"></a> [servers](#input\_servers) | Number of servers to create | `number` | `3` | no |
 | <a name="input_spot"></a> [spot](#input\_spot) | Toggle spot requests for server pool | `bool` | `false` | no |
 | <a name="input_ssh_authorized_keys"></a> [ssh\_authorized\_keys](#input\_ssh\_authorized\_keys) | Server pool list of public keys to add as authorized ssh keys | `list(string)` | `[]` | no |
+| <a name="input_statestore_attach_deny_insecure_transport_policy"></a> [statestore\_attach\_deny\_insecure\_transport\_policy](#input\_statestore\_attach\_deny\_insecure\_transport\_policy) | Toggle for enabling s3 policy to reject non-SSL requests | `bool` | `true` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Map of tags to add to all resources created | `map(string)` | `{}` | no |
 | <a name="input_unique_suffix"></a> [unique\_suffix](#input\_unique\_suffix) | Enables/disables generation of a unique suffix to cluster name | `bool` | `true` | no |
 | <a name="input_wait_for_capacity_timeout"></a> [wait\_for\_capacity\_timeout](#input\_wait\_for\_capacity\_timeout) | How long Terraform should wait for ASG instances to be healthy before timing out. | `string` | `"10m"` | no |

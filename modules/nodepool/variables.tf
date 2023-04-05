@@ -109,4 +109,3 @@ variable "extra_cloud_config_config" {
   type        = string
   default     = ""
 }
-

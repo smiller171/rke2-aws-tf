@@ -1,13 +1,15 @@
 exclude: ".terraform/"
 repos:
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.77.0
+    rev: v1.77.1
     hooks:
       - id: terraform_fmt
       - id: terraform_tflint
         alias: terraform_tflint_nocreds
         name: terraform_tflint_nocreds
         exclude: "^examples/"
+        args:
+          - --args=--config=__GIT_WORKING_DIR__/.tflint.hcl
   - repo: local
     hooks:
       - id: terraform_docs
